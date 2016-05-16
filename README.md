@@ -37,6 +37,7 @@ Install
 
 - Git using HTTPS: `git clone https://github.com/epistemex/msqr.git`
 - Git using SSH: `git clone git@github.com:epistemex/msqr.git`
+- NPM: `npm install -g msqr`
 - Download [zip archive](https://github.com/epistemex/msqr/archive/master.zip) and extract.
 - [msqr.min.js](https://raw.githubusercontent.com/epistemex/msqr/master/msqr.min.js)
 
