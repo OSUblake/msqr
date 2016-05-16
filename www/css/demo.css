@@ -1,0 +1,194 @@
+html, body {
+	margin: 0
+	}
+body {
+	background:#333;
+	}
+#c {
+	background:#2f2f2f;
+	margin:20px 0 0 345px;
+	}
+h2 {
+	padding-left:11px
+	}
+.dashboard {
+	background: #444;
+	position: fixed;
+	left:0;
+	top:0;
+	width:320px;
+	height:100%;
+	font:12px sans-serif;
+	color:#ccc;
+	}
+
+/* Separator style */
+.dashboard > hr {
+	border-top:1px solid #000;
+	border-bottom:none;
+	margin:9px 0;
+	}
+
+/* Groups (replaces the line class) */
+.dashboard .group {
+	background:#595a5d;
+	padding-bottom:7px;
+	margin-bottom:9px;
+	}
+
+.dashboard .group > .line {
+	margin-bottom:0;
+	}
+
+/* hidden class is for collapsed groups */
+.dashboard .hidden > div:first-child,
+.dashboard .group > div:first-child {
+	padding:5px 0 5px 12px;
+	margin-bottom:7px;
+	background:#2b3042;
+	cursor:pointer;
+	-ms-user-select:none;
+	-moz-user-select:none;
+	-webkit-user-select:none;
+	user-select:none;
+	}
+
+.dashboard .hidden > div:first-child {
+	color:#c0c0cd
+	}
+
+.dashboard .hidden > div:not(:first-child) {
+	display:none
+	}
+
+.dashboard .group > div:first-child::before,
+.dashboard .hidden > div:first-child::before {
+	font-size:10px;
+	width:15px;
+	display:inline-block;
+	}
+
+.dashboard .hidden > div:first-child::before {
+	vertical-align:bottom;
+	content: "\25b6\0020";  /* arrow right */
+	}
+
+.dashboard .group > div:first-child::before {
+	vertical-align:middle;
+	content: "\25bc\0020";  /* arrow down */
+	}
+
+/* Line container holding control and label etc. */
+.dashboard .line {
+	margin-bottom:7px;
+	}
+
+/* Label for this control line and group > line */
+.dashboard .line > label {
+	display:inline-block;
+	box-sizing:border-box;
+	width:37%;
+	margin-left:12px;
+	-ms-user-select:none;
+	-moz-user-select:none;
+	-webkit-user-select:none;
+	user-select:none;
+	}
+
+.dashboard .group > .line > label {
+	width:38%;
+	}
+
+/* Slider style */
+.dashboard .line > input[type="range"] {
+	width:40%;
+	margin:0 3px;
+	vertical-align:middle;
+	}
+
+.dashboard .line > input:disabled {
+	opacity:0.33
+	}
+
+/* Style for slider value */
+.dashboard .line > span {
+	width:11%;
+	text-align: right;
+	display:inline-block;
+	margin-right:12px;
+	}
+
+/* Checkbox style */
+.dashboard .line > input[type="checkbox"] {
+	margin:5px 0;
+	vertical-align:middle;
+	}
+
+/* Textbox style */
+.dashboard .line > input[type="text"] {
+	width:56%;
+	margin:3px 0;
+	padding:3px 6px 5px 6px;
+	box-sizing:border-box;
+	border:1px solid #000;
+	border-radius:3px;
+	background:#eee;
+	}
+
+/* Button style */
+.dashboard .line > button {
+	width:56%;
+	background:#aaa;
+	border:1px solid #000;
+	border-radius:2px;
+	padding:3px 0;
+	}
+
+.dashboard .line > button:hover {
+	background:#e6c92e;
+	}
+
+.dashboard .line > button:active {
+	background:#e6d970;
+	}
+
+/* Dropdown style */
+.dashboard .line > select {
+	width:56%;
+	padding:2px 0 4px 0;
+	border:1px solid #000;
+	border-radius:2px;
+	background:#ddd;
+	}
+
+/* Radio buttons */
+.dashboard .radio > p  {
+	padding: 0 0 0 7px;
+	}
+
+.dashboard .radio > input  {
+	margin:0 9px 9px 15px;
+	}
+
+.dashboard .radio > label  {
+	display:inline;
+	vertical-align: top;
+	-ms-user-select:none;
+	-moz-user-select:none;
+	-webkit-user-select:none;
+	user-select:none;
+	}
+
+/* Text style (note: not when raw=true) */
+.dashboard .line > p {
+	padding:12px;
+	font-size:14px;
+	box-sizing:border-box;
+	}
+
+/* Info style */
+.dashboard .line > i {
+	display:inline-block;
+	padding:5px 12px 5px 0;
+	box-sizing:border-box;
+	}
