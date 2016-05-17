@@ -1,6 +1,5 @@
 /*!
-	MSQR (marching-squares) ver 0.1.0 alpha
-
+	MSQR (marching-squares) ver 0.2.0 alpha
 	(c) 2016 K3N / Epistemex
 	www.epistemex.com
 	MIT License
@@ -28,7 +27,8 @@
  * @param {boolean} [options.align=false] - Attempts to align points to edge after reduction or with path if no reduction is performed. Disabled if padding is enabled.
  * @param {number} [options.alignWeight=0.95] - Weighting a aligned point to avoid overlapping points.
  * @param {number} [options.padding=0] - Add padding before tracing (radius). Use negative value to contract. Padding overrides and disables aligning if enabled.
- * @returns {Array}
+ * @param {boolean} [options.path2D=false] - Return array holding Path2D objects instead of point arrays.
+ * @returns {Array} Holds arrays with points for each shape, or if path2D=true an Path2D object for each shape
  * @static
  */
 function MSQR(src, options) {
@@ -57,6 +57,7 @@ function MSQR(src, options) {
 		cw          = options.width || w,
 		ch          = options.height || h,
 		bu, paths   = [], path,
+		lastPos = 3, // for recursive calls
 		bleed       = Math.max(1, options.bleed || 5),
 		max         = Math.max(1, options.maxShapes || 1),
 		alpha       = Math.max(0, Math.min(254, options.alpha || 0)),
@@ -64,6 +65,7 @@ function MSQR(src, options) {
 		tolerance   = Math.max(0, options.tolerance || 0),
 		doAlign     = !!options.align,
 		alignWeight = options.alignWeight || 0.95,
+		retPath     = !!options.path2D,
 		ctx2, inc;
 
 	// check bounds
@@ -71,7 +73,7 @@ function MSQR(src, options) {
 		cw < 1 || ch < 1 || cx + cw > w || cy + ch > h)
 		return [];
 
-	// list? make backup since we will remove shapes
+	// recursive? make backup since we will need to remove shapes
 	if (max > 1 || padding) {
 
 		// backup bitmap so we can mess around
@@ -90,7 +92,7 @@ function MSQR(src, options) {
 		if (padding) {
 
 			ctx2 = img2context(ctx.canvas);
-			inc = padding > 5 ? 16 : 8; //Math.pow(padding * 2, 2);
+			inc = padding < 0 ? 4 : (padding > 5 ? 16 : 8);
 
 			if (padding < 0)
 				ctx.globalCompositeOperation = "destination-in";
@@ -107,11 +109,12 @@ function MSQR(src, options) {
 			if (path.length) {
 
 				// add to list
-				paths.push(path);
+				paths.push(retPath ? points2path(path) : path);
 
 				// remove traced shape
 				ctx.beginPath();
-				path.forEach(function(p) {ctx.lineTo(p.x, p.y, 1, 1)});
+				var i = path.length - 1;
+				while(i--) ctx.lineTo(path[i].x, path[i].y);
 				ctx.globalCompositeOperation = "destination-out";
 				ctx.lineWidth = bleed;
 				ctx.closePath();
@@ -127,8 +130,10 @@ function MSQR(src, options) {
 
 		return paths
 	}
-	else
-		paths.push(trace());
+	else {
+		path = trace();
+		paths.push(retPath ? points2path(path) : path);
+	}
 
 	return paths;
 
@@ -138,21 +143,20 @@ function MSQR(src, options) {
 	function trace() {
 
 		var path = [],
-			data, map, l,
+			data, l,
 			i, x, y, sx, sy,
 			start = -1,
 			step, pStep = 9,
-			steps = new Uint8Array([9, 0, 3, 3, 2, 0, 9, 3, 1, 9, 1, 1, 2, 0, 2, 9]);
+			steps = [9, 0, 3, 3, 2, 0, 9, 3, 1, 9, 1, 1, 2, 0, 2, 9];
 
-		data = ctx.getImageData(cx, cy, cw, ch).data;
+		data = new Uint32Array(ctx.getImageData(cx, cy, cw, ch).data.buffer);
 		l = data.length;
-		map = new Uint8Array(cw * ch);
 
-		// create target map and find start point
-		for(i = 3; i < l; i += 4) {
-			if (data[i] > alpha) {
-				map[i>>2] = 1;
-				if (start < 0) start = i>>2;
+		// start position
+		for(i = lastPos; i < l; i++) {
+			if ((data[i]>>>24) > alpha) {
+				start = lastPos = i;
+				break
 			}
 		}
 
@@ -188,7 +192,7 @@ function MSQR(src, options) {
 
 		// lookup map entry
 		function getState(x, y) {
-			return (x > -1 && y > -1 && x < cw && y < ch) ? map[y * cw + x] : 0
+			return (x >= 0 && y >= 0 && x < cw && y < ch) ? (data[y * cw + x]>>>24) > alpha : 0
 		}
 
 		// Parse 2x2 pixels to determine next step direction.
@@ -300,6 +304,10 @@ function MSQR(src, options) {
 		return path
 	}
 
+	/*
+		Helper functions
+	 */
+
 	function img2context(src) {
 		var c = document.createElement("canvas"), ctx;
 		c.width = src.naturalWidth || src.videoWidth || src.width;
@@ -307,6 +315,14 @@ function MSQR(src, options) {
 		ctx = c.getContext("2d");
 		ctx.drawImage(src, 0, 0);
 		return ctx
+	}
+
+	function points2path(points) {
+		var path = new Path2D(), i, point;
+		path.moveTo(points[0].x, points[0].y);
+		for(i = 1; point = points[i++];) path.lineTo(point.x, point.y);
+		path.closePath();
+		return path
 	}
 
 }

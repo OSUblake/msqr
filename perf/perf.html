@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Performance test</title>
+</head>
+<body>
+
+<canvas id="c"></canvas><br>
+<pre id="o"></pre>
+
+<script src="../msqr.min.js"></script>
+<script src="MarchingSquares.js"></script>
+<script>
+
+	var img = new Image();
+	img.onload = test;
+	img.src = "../www/gfx/epistemex.png";
+
+	function test() {
+
+		var ctx = c.getContext("2d"), times = [], cw, runCnt = 0,
+
+		    // NOTE: in case Chrome throws an "aww, snap" at you, lower count to f.ex. 800 or runs to 4.
+		    cnt = 1000,
+			runs = 5;
+
+		// draw image double size. We want to stress that O(n^2)
+		cw = c.width = img.width << 1;
+		c.height = img.height << 1;
+
+		ctx.rotate(0.1);
+		ctx.drawImage(this, 0, 0, cw, c.height);
+
+		(function() {
+
+			// d3-plugin for calculating outline paths
+			// License: https://github.com/d3/d3-plugins/blob/master/LICENSE
+			//
+			// Copyright (c) 2012-2014, Michael Bostock
+			// All rights reserved.
+			//
+			//  Redistribution and use in source and binary forms, with or without
+			//  modification, are permitted provided that the following conditions are met:
+			//* Redistributions of source code must retain the above copyright notice, this
+			//  list of conditions and the following disclaimer.
+			//* Redistributions in binary form must reproduce the above copyright notice,
+			//  this list of conditions and the following disclaimer in the documentation
+			//  and/or other materials provided with the distribution.
+			//* The name Michael Bostock may not be used to endorse or promote products
+			//  derived from this software without specific prior written permission.
+			// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MICHAEL BOSTOCK BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+			d3 = {geom: {}};
+			d3.geom.contour = function(grid, start) {
+				var s = start || d3_geom_contourStart(grid), // starting point
+				    c = [],    // contour polygon
+				    x = s[0],  // current x position
+				    y = s[1],  // current y position
+				    dx = 0,    // next x direction
+				    dy = 0,    // next y direction
+				    pdx = NaN, // previous x direction
+				    pdy = NaN, // previous y direction
+				    i = 0;
+
+				do {
+					// determine marching squares index
+					i = 0;
+					if (grid(x-1, y-1)) i += 1;
+					if (grid(x,   y-1)) i += 2;
+					if (grid(x-1, y  )) i += 4;
+					if (grid(x,   y  )) i += 8;
+
+					// determine next direction
+					if (i === 6) {
+						dx = pdy === -1 ? -1 : 1;
+						dy = 0;
+					} else if (i === 9) {
+						dx = 0;
+						dy = pdx === 1 ? -1 : 1;
+					} else {
+						dx = d3_geom_contourDx[i];
+						dy = d3_geom_contourDy[i];
+					}
+
+					// update contour polygon
+					if (dx != pdx && dy != pdy) {
+						c.push([x, y]);
+						pdx = dx;
+						pdy = dy;
+					}
+
+					x += dx;
+					y += dy;
+				} while (s[0] != x || s[1] != y);
+
+				return c;
+			};
+
+			// lookup tables for marching directions
+			var d3_geom_contourDx = [1, 0, 1, 1,-1, 0,-1, 1,0, 0,0,0,-1, 0,-1,NaN],
+			    d3_geom_contourDy = [0,-1, 0, 0, 0,-1, 0, 0,1,-1,1,1, 0,-1, 0,NaN];
+
+			function d3_geom_contourStart(grid) {
+				var x = 0,
+				    y = 0;
+
+				// search for a starting point; begin at origin
+				// and proceed along outward-expanding diagonals
+				while (true) {
+					if (grid(x,y)) {
+						return [x,y];
+					}
+					if (x === 0) {
+						x = y + 1;
+						y = 0;
+					} else {
+						x = x - 1;
+						y = y + 1;
+					}
+				}
+			}
+		})();
+
+		function out(txt) {
+			(txt) ? o.innerHTML += txt + "\n" : o.innerHTML = ""
+		}
+
+		(function run() {
+
+			if (runs--) {
+				out("\nRUN " + ++runCnt);
+				out("------------");
+				out("Testing MSQR...");
+				perf(test1, function() {
+					out("Testing D3 plugin...");
+					perf(test2, function() {
+						out("Testing sakri's port...");
+						perf(test3, run)
+					})
+				})
+			}
+			else {
+
+				// results are in
+
+				var avg1 = 0, avg2 = 0,
+				    res = "\n MSQR       D3 plugin  Sakri's          Diff D3    Diff Sakri\n";
+
+				res+= "+----------+----------+----------+     +----------+----------+\n";
+
+				for(var i = 0; i < times.length; i += 3) {
+					res += lpad(times[i]) + "    ";
+					res += lpad(times[i+1]) + "   ";
+					res += lpad(times[i+2]) + "   ";
+
+					res += "     ";
+					res += lpad(times[i+1] / times[i]) + "x  ";
+					res += lpad(times[i+2] / times[i]) + "x  ";
+					res += "\n";
+
+					avg1 += times[i+1] / times[i];
+					avg2 += times[i+2] / times[i];
+				}
+				avg1 = avg1 / (times.length / 3);
+				avg2 = avg2 / (times.length / 3);
+
+				res += "\n";
+				res += "MSQR ~" + avg1.toFixed(2) + "x faster than D3 Plugin on average.\n";    // "faster" is assumed from previous tests and to
+				res += "MSQR ~" + avg2.toFixed(2) + "x faster than Sakri's port on average.\n"; // make it clear what Nx means. Value could be < 1
+
+				out();
+				out(res);
+			}
+
+			function lpad(n) {
+				var txt = "      " + n.toFixed(4),
+				    l = txt.length;
+				return txt.substr(l - 8)
+			}
+		})();
+
+		function test1() {
+			return MSQR(c)
+		}
+
+		function test2() {
+
+			function checkAlpha(x, y) {
+				return data[((y * cw + x)<<2) + 3] > 254
+			}
+
+			// NOTE -
+			// Usually the D3 framework would do the setup for canvas and
+			// the plugin. Since the plugin does not obtain any bitmap data
+			// itself we have to give it a light penalty in order to obtain
+			// needed data as well as make it comparable to the other two.
+			var ctx = c.getContext("2d");
+			var data = ctx.getImageData(0, 0, c.width, c.height).data;
+			return d3.geom.contour(checkAlpha);
+		}
+
+		function test3() {
+			return MarchingSquares.getBlobOutlinePoints(c)
+		}
+
+		function perf(f, callback) {
+
+			var div = 20,
+			    part = cnt / div,
+			    diff = 0,
+			    time1, time2;
+
+			setTimeout(calc, 50);
+
+			function calc() {
+				for(var i = 0; i < part; i++) {
+					time1 = performance.now();
+					f();
+					time2 = performance.now();
+					diff += (time2 - time1)
+				}
+
+				if (--div) requestAnimationFrame(calc);
+				else {
+					times.push(diff / cnt);
+					callback()
+				}
+			}
+		}
+	}
+
+</script>
+</body>
+</html>

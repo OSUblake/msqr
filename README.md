@@ -5,7 +5,7 @@ This is a fast JavaScript implementation of the [Marching Squares](https://en.wi
 which can convert the outline of an image to path data based on the alpha channel.
 
 It's internally recursive and can trace multiple paths in the same image. It includes optional point reduction algorithm (Ramer-Douglas-Peucker) to 
-reduce number of points in the path as well as offering padding/bleed and clipping features and point alignment for a more tighter path. 
+reduce number of points in the path as well as offering padding/bleed and clipping features, as well as point alignment for a more tighter path. 
 
 Use with an image which already has an alpha channel, or pre-process the image to obtain desired alpha channel.
 
@@ -20,9 +20,23 @@ Features
 - Padding, Contracting and Bleed mask options
 - Optional clipping can be defined
 - Optional node.js support
+- Can optionally return Path2D objects representing each shape
 - HTML docs included
 
 NOTE: ALPHA
+
+
+Performance
+-----------
+
+Overall test results indicate MSQR to be up to 33% faster compared to other 
+fast implementations depending on browser and hardware, and up to 20 times 
+faster compared to non-optimized solutions.
+
+For details, see **[Performance.md](Performance.md)**. 
+
+Test code included comparing two other solutions.
+
 
 Demo
 ----
@@ -45,7 +59,7 @@ Install
 Usage
 -----
 
-Draw the image to canvas, then hand over the context and optionally set options:
+Draw the image to canvas, or provide an image or context (even video):
 
 	var pathPoints = MSQR( canvas|context|image|video [, options] );
 
