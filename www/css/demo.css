@@ -11,6 +11,7 @@ body {
 h2 {
 	padding-left:11px
 	}
+
 .dashboard {
 	background: #444;
 	position: fixed;
@@ -19,7 +20,7 @@ h2 {
 	width:320px;
 	height:100%;
 	font:12px sans-serif;
-	color:#ccc;
+	color:#fff;
 	}
 
 /* Separator style */
@@ -96,7 +97,7 @@ h2 {
 	}
 
 .dashboard .group > .line > label {
-	width:38%;
+	width:37%;
 	}
 
 /* Slider style */
@@ -104,10 +105,6 @@ h2 {
 	width:40%;
 	margin:0 3px;
 	vertical-align:middle;
-	}
-
-.dashboard .line > input:disabled {
-	opacity:0.33
 	}
 
 /* Style for slider value */
@@ -128,10 +125,10 @@ h2 {
 .dashboard .line > input[type="text"] {
 	width:56%;
 	margin:3px 0;
-	padding:3px 6px 5px 6px;
+	padding:2px 5px 4px 5px;
 	box-sizing:border-box;
 	border:1px solid #000;
-	border-radius:3px;
+	border-radius:2px;
 	background:#eee;
 	}
 
@@ -191,4 +188,20 @@ h2 {
 	display:inline-block;
 	padding:5px 12px 5px 0;
 	box-sizing:border-box;
+	}
+
+/* Link style */
+.dashboard .line > a {
+	color:#ccc;
+	padding:5px 7px;
+	}
+
+.dashboard .line > a:hover {
+	color:#fff;
+	}
+
+/* Disabled styles */
+.dashboard .line > select:disabled,
+.dashboard .line > input:disabled {
+	opacity:0.5
 	}

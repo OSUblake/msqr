@@ -1,0 +1,22 @@
+{
+  "name": "msqr",
+  "version": "0.2.1",
+  "description": "Fast Marching Square algorithm for JavaScript.",
+  "main": "msqr.min.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/epistemex/msqr.git"
+  },
+  "keywords": [
+    "marching squares", "algorithm", "image", "outline", "alpha", "trace", "fast", "iso-contour", "path", "outline", "canvas", "fast", "video", "bitmap"
+  ],
+  "author": "Ken Nilsen <github@epistemex.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/epistemex/msqr/issues"
+  },
+  "homepage": "https://epistemex.github.io/msqr/demo.html"
+}

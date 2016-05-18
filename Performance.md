@@ -46,4 +46,4 @@ Average time per 1000 traces in Firefox, 5 runs:
 	MSQR ~1.02x faster than D3 Plugin on average.
 	MSQR ~19.62x faster than Sakri's port on average.
 
-There will be fluctuations depending on cache, browser compiling of JavaScript and so forth.
+There will be fluctuations depending on CPU cache, browser compiling of JavaScript and so forth.

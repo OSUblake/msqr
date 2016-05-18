@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>marching-squares demo</title>
+	<title>MSQR (marching squares) demo</title>
 	<link rel="stylesheet" href="css/demo.css" type="text/css">
 </head>
 <body>
@@ -13,17 +13,14 @@
 <script src="../msqr.min.js"></script>
 <script>
 
-	var img = new Image;
-	var options, timer;
-	var ctx = c.getContext("2d");
-	var render = renderText;
-	var dash = new Dashboard({callback: optionHandler})
-
-		// Build dashboard - we could call add for each item; here we use an array instead
-		.add([
+	var img = new Image,
+		options, timer,
+		ctx = c.getContext("2d"),
+		render = renderText,
+		dash = new Dashboard({callback: optionHandler}).add([
 			{type: "text", text: "<h2>Marching Squares Demo</h2>", raw: true},
 			{type: "textbox", id: "text", bind: "text", label: "Text", text: "Epistemex", live: true},
-			{type: "slider", bind: "rotation", label: "Rotation", min:0, max:359, live: true},
+			{type: "slider", bind: "rotation", label: "Rotation", min:0, max:359, value:2, live: true},
 			{type: "slider", id: "rotChar", bind: "rotChar", label: "Letter rotation", min:0, max:359, value: 170, live: true},
 			{type: "slider", id: "radius", bind: "radius", label: "Radius", min:50, max:400, value:200, live: true},
 			{type: "slider", id: "fontSize", bind: "fontSize", label: "Font size", min: 50, max:450, value:300, live: true},
@@ -32,7 +29,7 @@
 			{type: "slider", bind: "alpha", label: "Alpha", min:0, max:254, value: 254, live: true},
 			{type: "slider", bind: "padding", label: "Padding", min:-9, max:9, value: 0, live: true},
 			{type: "slider", bind: "bleed", label: "Bleed mask", min:0, max:10, value: 5, live: true},
-			{type: "slider", bind: "tolerance", label: "Tolerance", min:0, max:4, step: 0.1, value: 1.2, live: true},
+			{type: "slider", bind: "tolerance", label: "Tolerance", min:0, max:4, step: 0.1, value: 1.1, live: true},
 			{type: "checkbox", bind: "align", id: "cAlign", label: "Align", checked: true},
 			{type: "separator"},
 			{type: "checkbox", id: "useImage", label: "Use image"},
@@ -43,7 +40,9 @@
 			{type: "info", id: "lCount", label: "Shapes detected", text: "-"},
 			{type: "info", id: "lTime", label: "Time (ms)", text: "-"},
 			{type: "info", id: "lAvg", label: "Avg. time / shape", text: "-"},
-			{type: "info", id: "lPts", label: "Tot. number of points", text: "-"}
+			{type: "info", id: "lPts", label: "Tot. # of points", text: "-"},
+			{type: "separator"},
+			{type: "link", text: "Download from GitHub", value: "https://github.com/epistemex/msqr"}
 		]);
 
 	img.onload = update;
@@ -77,14 +76,13 @@
 	function renderText() {
 		options = dash.getBound();
 
-		ctx.clearRect(0, 0, c.width, c.height);
-
 		var txt = options.text,
 		    len = txt.length,
 		    offset = options.rotation / 180 * Math.PI,
 		    rotChar = options.rotChar / 180 * Math.PI,
 		    step = Math.PI * 2 / len;
 
+		ctx.clearRect(0, 0, c.width, c.height);
 		if (!len) return;
 
 		ctx.textBaseline = "middle";
@@ -114,10 +112,10 @@
 
 	function trace() {
 
-		var time1 = performance.now();
-		var paths = MSQR(ctx, options);
-		var time = performance.now() - time1;
-		var cnt = 0;
+		var time1 = performance.now(),
+			paths = MSQR(ctx, options),
+			time = performance.now() - time1,
+			cnt = 0;
 
 		paths.forEach(function(path) {
 			cnt += path.length
@@ -138,6 +136,7 @@
 			paths.forEach(renderPath);
 			ctx.strokeStyle = "#fff";
 			ctx.stroke();
+
 			ctx.setLineDash([5, 5]);
 			ctx.strokeStyle = "#f00";
 			ctx.stroke();

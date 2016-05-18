@@ -1,6 +1,9 @@
 Change log for marching squares
 -------------------------------
 
+0.2.1
+IMP: Minor internal changes/improvements
+
 0.2.0
 ADD: Option to return array holding Path2D objects instead of point arrays
 CHG: Internals to increase performance

@@ -20,6 +20,8 @@
 	function test() {
 
 		var ctx = c.getContext("2d"), times = [], cw, runCnt = 0,
+			tests = [test1, test2, test3],
+		    testsNames = ["MSQR", "D3 plugin", "Sakri's"],
 
 		    // NOTE: in case Chrome throws an "aww, snap" at you, lower count to f.ex. 800 or runs to 4.
 		    cnt = 1000,
@@ -127,44 +129,51 @@
 
 		(function run() {
 
+			var tn = 0;
+
 			if (runs--) {
 				out("\nRUN " + ++runCnt);
 				out("------------");
-				out("Testing MSQR...");
-				perf(test1, function() {
-					out("Testing D3 plugin...");
-					perf(test2, function() {
-						out("Testing sakri's port...");
-						perf(test3, run)
+
+				doTests();
+				function doTests() {
+					out("Testing " + testsNames[tn] + "...");
+					perf(tests[tn++], function() {
+						if (tn < tests.length) doTests();
+						else run();
 					})
-				})
+				}
 			}
 			else {
 
 				// results are in
 
-				var avg1 = 0, avg2 = 0,
+				//todo build/pad header based on names, store avg values in array -> spin-off perf framework?
+				var avg = [], avg1 = 0, avg2 = 0,
 				    res = "\n MSQR       D3 plugin  Sakri's          Diff D3    Diff Sakri\n";
 
 				res+= "+----------+----------+----------+     +----------+----------+\n";
 
-				for(var i = 0; i < times.length; i += 3) {
-					res += lpad(times[i]) + "    ";
-					res += lpad(times[i+1]) + "   ";
-					res += lpad(times[i+2]) + "   ";
+				for(var i = 0, t; i < times.length; i += tests.length) {
+					for(t = 0; t < tests.length; t++)
+						res += lpad(times[i+t]) + "    ";
 
 					res += "     ";
-					res += lpad(times[i+1] / times[i]) + "x  ";
-					res += lpad(times[i+2] / times[i]) + "x  ";
+
+					for(t = 1; t < tests.length; t++)
+						res += lpad(times[i+t] / times[i]) + "x  ";
 					res += "\n";
 
-					avg1 += times[i+1] / times[i];
-					avg2 += times[i+2] / times[i];
+					for(t = 1; t < tests.length; t++)
+						avg1 += times[i+t] / times[i];
 				}
-				avg1 = avg1 / (times.length / 3);
-				avg2 = avg2 / (times.length / 3);
+				avg1 = avg1 / (times.length / tests.length);
+				avg2 = avg2 / (times.length / tests.length);
 
 				res += "\n";
+				//for(t = 1; t < tests.length; t++)
+				//	res += "MSQR ~" + avg1.toFixed(2) + "x faster than " + testsNames[t] + " on average.\n";
+
 				res += "MSQR ~" + avg1.toFixed(2) + "x faster than D3 Plugin on average.\n";    // "faster" is assumed from previous tests and to
 				res += "MSQR ~" + avg2.toFixed(2) + "x faster than Sakri's port on average.\n"; // make it clear what Nx means. Value could be < 1
 
