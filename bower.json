@@ -1,0 +1,19 @@
+{
+  "name": "msqr",
+  "version": "0.2.0",
+  "homepage": "https://github.com/epistemex/msqr",
+  "authors": [
+    "epistemex <github@epistemex.com>"
+  ],
+  "description": "Fast Marching Square algorithm for JavaScript.",
+  "main": "msqr.min.js",
+  "keywords": [
+    "marching squares", "algorithm", "image", "outline", "alpha", "trace", "fast", "iso-contour", "path", "outline", "canvas", "fast", "video", "bitmap"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "tests",
+    "tuts"
+  ]
+}

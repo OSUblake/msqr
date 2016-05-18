@@ -5,7 +5,7 @@ This is a fast JavaScript implementation of the [Marching Squares](https://en.wi
 which can convert the outline of an image to path data based on the alpha channel.
 
 It's internally recursive and can trace multiple paths in the same image. It includes optional point reduction algorithm (Ramer-Douglas-Peucker) to 
-reduce number of points in the path as well as offering padding/bleed and clipping features, as well as point alignment for a more tighter path. 
+reduce number of points in the path in addition to offering padding/bleed and clipping features, as well as point alignment for a more tighter path. 
 
 Use with an image which already has an alpha channel, or pre-process the image to obtain desired alpha channel.
 
@@ -13,14 +13,14 @@ Use with an image which already has an alpha channel, or pre-process the image t
 Features
 --------
 
-- Fast, small and easy to use
-- Can trace all separate shapes in the same image
-- Optional fast Ramer-Douglas-Peucker point reduction algorithm
-- Alignment of points to make tighter fit as well as help reduce more points
+- [Fast](Performance.md), small and easy to use
+- Can trace all separate shapes in the same using a single call
+- Optional fast Ramer-Douglas-Peucker point reduction
+- Alignment of points to make tighter fit
 - Padding, Contracting and Bleed mask options
-- Optional clipping can be defined
-- Optional node.js support
+- Optional clipping region
 - Can optionally return Path2D objects representing each shape
+- Optional node.js support
 - HTML docs included
 
 NOTE: ALPHA
@@ -52,10 +52,11 @@ Install
 - Git using HTTPS: `git clone https://github.com/epistemex/msqr.git`
 - Git using SSH: `git clone git@github.com:epistemex/msqr.git`
 - NPM: `npm install -g msqr`
+- Bower: `bower install msqr`
 - Download [zip archive](https://github.com/epistemex/msqr/archive/master.zip) and extract.
 - [msqr.min.js](https://raw.githubusercontent.com/epistemex/msqr/master/msqr.min.js)
 
-	
+
 Usage
 -----
 
@@ -78,7 +79,8 @@ Options include clipping, alpha tolerance and point distance tolerance:
 	  bleed: 5,			// width of bleed mask (used with multiple shapes only)
 	  maxShapes: 5,		// max shapes to trace (default = 1)
 	  padding: 0,		// pad image before processing, negative value = contract
-	  align: true		// attempt to better align resulting path
+	  align: true,		// attempt to better align resulting path
+	  path2D: false		// return list with Path2D objects instead of point arrays
 	});
 
 Additional helper function:

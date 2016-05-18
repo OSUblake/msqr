@@ -1,12 +1,13 @@
 /*!
-	MSQR (marching-squares) ver 0.2.0 alpha
+	MSQR v0.2.0 alpha
 	(c) 2016 K3N / Epistemex
 	www.epistemex.com
 	MIT License
 */
 
 /**
- * Convert a canvas, context, image or video frame to a path that aligns with the outline of the non-alpha pixels.
+ * Convert a canvas, context, image or video frame to a path that aligns with the outline of the non-alpha pixels
+ * using an optimized version of the marching squares algorithm.
  *
  * Alpha threshold can be adjusted. Optional point reduction can be performed to reduce total number of points.
  *
